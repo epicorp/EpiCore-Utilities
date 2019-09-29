@@ -22,6 +22,8 @@ public class CustomInventory implements Inventory {
 		this.contents = array;
 	}
 
+	public CustomInventory(int length) {this(new ItemStack[length]);}
+
 	@Override
 	public int getSize() {
 		return contents.length;
@@ -225,7 +227,7 @@ public class CustomInventory implements Inventory {
 
 	@Override
 	public InventoryType getType() {
-		throw new UnsupportedOperationException("Not supported!");
+		return InventoryType.CHEST;
 	}
 
 	@Override

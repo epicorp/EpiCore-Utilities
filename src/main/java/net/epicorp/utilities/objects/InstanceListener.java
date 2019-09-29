@@ -24,7 +24,7 @@ public class InstanceListener {
 	public static <T, B extends Annotation> void register(Listener object, Plugin plugin, Class<B> anno, Function<Event, T> converter, Predicate<T> acceptable, Predicate<B> ignoreCancelled, Function<B, EventPriority> getPriority) {
 		Class<?> thisClass = object.getClass(); // get the current class
 		for (Method method : thisClass.getMethods()) { // get all public methods including inherited ones
-			B eventHandler = method.getDeclaredAnnotation(anno); // find custom event handler
+			B eventHandler = method.getAnnotation(anno); // find custom event handler
 			Class<?>[] paramTypes = method.getParameterTypes();
 			if (eventHandler != null && paramTypes.length > 0) { // filter unannotated methods
 				Class<?> eventClass = paramTypes[0];

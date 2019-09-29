@@ -7,9 +7,23 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    maven {
+        name = 'spigotmc-repo'
+        url = 'https://hub.spigotmc.org/nexus/content/groups/public/'
+    }
+
+    maven {
+        name = 'codemc-repo'
+        url = 'https://repo.codemc.org/repository/maven-public/'
+    }
+}
+
+tasks.withType(Jar) {
+    destinationDir = file("$rootDir.parentFile/output")
 }
 
 dependencies {
     compile 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT'
     testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile fileTree(dir: "$rootDir.parentFile/output", include: ['*.jar'])
 }
