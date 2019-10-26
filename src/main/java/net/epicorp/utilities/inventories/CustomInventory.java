@@ -1,5 +1,6 @@
 package net.epicorp.utilities.inventories;
 
+import net.epicorp.persistance.Persistent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -7,22 +8,30 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.io.BukkitObjectInputStream;
+import org.bukkit.util.io.BukkitObjectOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 
-public class CustomInventory implements Inventory {
+public class CustomInventory implements Inventory, Persistent {
 
-	protected ItemStack[] contents;
-	protected int stackSize;
-	protected String name;
+	protected ItemStack[] contents; // non null
+	protected int stackSize; // TODO implement
+	protected String name = "Chest"; // non null
 
 	public CustomInventory(ItemStack[] array) {
 		this.contents = array;
+		name = "Chest";
 	}
 
 	public CustomInventory(int length) {this(new ItemStack[length]);}
+
+	public CustomInventory() {}
 
 	@Override
 	public int getSize() {
@@ -61,7 +70,7 @@ public class CustomInventory implements Inventory {
 			ItemStack stack = Inventories.addStack(items[i], contents);
 			unfit.put(i, stack);
 		}
-		return null;
+		return unfit;
 	}
 
 	@Override
@@ -71,7 +80,7 @@ public class CustomInventory implements Inventory {
 			ItemStack stack = Inventories.remove(items[i], contents);
 			unfit.put(i, stack);
 		}
-		return null;
+		return unfit;
 	}
 
 	@Override
@@ -248,5 +257,38 @@ public class CustomInventory implements Inventory {
 	@Override
 	public Location getLocation() {
 		throw new UnsupportedOperationException("Not supported!");
+	}
+
+	@Override
+	public void load(DataInputStream stream) throws IOException {
+		name = stream.readUTF();
+		stackSize = stream.readInt();
+
+		ItemStack[] stacks = new ItemStack[stream.readInt()];
+
+		BukkitObjectInputStream bois = new BukkitObjectInputStream(stream);
+		for (int i = 0; i < stacks.length; i++) {
+			try {
+				stacks[i] = (ItemStack) bois.readObject();
+			} catch (ClassNotFoundException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		this.contents = stacks;
+	}
+
+	@Override
+	public void writeTo(DataOutputStream stream) throws IOException {
+		stream.writeUTF(name);
+		stream.writeInt(stackSize);
+		stream.writeInt(contents.length);
+		BukkitObjectOutputStream boos = new BukkitObjectOutputStream(stream);
+		for (ItemStack content : contents)
+			boos.writeObject(content);
+	}
+
+	@Override
+	public void close() {
+
 	}
 }

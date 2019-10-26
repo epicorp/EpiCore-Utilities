@@ -85,9 +85,7 @@ public class BukkitBytes {
 	 * @param dos
 	 */
 	public static void serializeLocation(Location location, DataOutputStream dos) throws IOException {
-		UUID uuid = location.getWorld().getUID();
-		dos.writeLong(uuid.getMostSignificantBits());
-		dos.writeLong(uuid.getLeastSignificantBits());
+		serializeUUID(location.getWorld().getUID(), dos);
 		dos.writeDouble(location.getX());
 		dos.writeDouble(location.getY());
 		dos.writeDouble(location.getZ());
@@ -101,7 +99,22 @@ public class BukkitBytes {
 	 * @throws IOException
 	 */
 	public static Location deserializeLocation(DataInputStream dis) throws IOException {
-		return new Location(Bukkit.getWorld(new UUID(dis.readLong(), dis.readLong())), dis.readDouble(), dis.readDouble(), dis.readDouble());
+		return new Location(Bukkit.getWorld(deserializeUUID(dis)), dis.readDouble(), dis.readDouble(), dis.readDouble());
+	}
+
+	/**
+	 * writes a uuid to the stream
+	 * @param uuid
+	 * @param dos
+	 * @throws IOException
+	 */
+	public static void serializeUUID(UUID uuid, DataOutputStream dos) throws IOException {
+		dos.writeLong(uuid.getMostSignificantBits());
+		dos.writeLong(uuid.getLeastSignificantBits());
+	}
+
+	public static UUID deserializeUUID(DataInputStream dis) throws IOException {
+		return new UUID(dis.readLong(), dis.readLong());
 	}
 
 

@@ -1,6 +1,8 @@
 package net.epicorp.utilities.objects;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class If {
 	public static void nonNull(Object object, ERunnable runnable) {
@@ -23,6 +25,16 @@ public class If {
 			_if.run();
 		else
 			_else.run();
+	}
+
+	public static <T> T nonNull(T object, Supplier<T> supplier) {
+		if(object == null)
+			return supplier.get();
+		return object;
+	}
+
+	public static <A, B> B computeIfNull(A object, Function<A, B> convert) {
+		return object == null ? null : convert.apply(object);
 	}
 
 	public interface ERunnable extends Runnable {

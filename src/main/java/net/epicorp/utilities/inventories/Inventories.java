@@ -30,6 +30,7 @@ public class Inventories {
 		}
 	}
 
+
 	/**
 	 * gets the amount of items that would be left over after a merge with the target inventory
 	 *
@@ -59,8 +60,10 @@ public class Inventories {
 				target[i] = stack.clone();
 				return null;
 			} else if (current.isSimilar(stack)) {
+				int old = items;
 				items -= getLeft(current); // subtract the left over space for stacking in the item
-				current.setAmount(current.getMaxStackSize());
+				if (items > 0) current.setAmount(current.getMaxStackSize());
+				else current.setAmount(old + current.getAmount());
 			}
 			if (items <= 0) // if there is enough space, we good
 				return null;
@@ -69,9 +72,10 @@ public class Inventories {
 		left.setAmount(items);
 		return left;
 	}
+
 	/**
 	 * checks if the inventory has space for the item
-	 *
+	 * uses {@link Inventory#getStorageContents()}
 	 * @param stack the item
 	 * @param inventory the inventory to insert
 	 * @return
@@ -196,8 +200,7 @@ public class Inventories {
 	 */
 	public static boolean containsUnsafe(ItemStack stack, ItemStack[] stacks) {
 		for (ItemStack itemStack : stacks)
-			if (isSimilar(stack, itemStack))
-				return getAmount(stack) <= getAmount(itemStack);
+			if (isSimilar(stack, itemStack)) return getAmount(stack) <= getAmount(itemStack);
 		return false;
 	}
 
@@ -216,8 +219,7 @@ public class Inventories {
 	}
 
 	public static boolean isSimilar(ItemStack a, ItemStack b) {
-		if((a == null) != (b==null))
-			return false;
+		if ((a == null) != (b == null)) return false;
 		return a == null || a.isSimilar(b);
 	}
 
@@ -228,26 +230,26 @@ public class Inventories {
 	public static ItemStack[] clone(ItemStack[] stacks) {
 		ItemStack[] inv = new ItemStack[stacks.length];
 		for (int i = 0; i < stacks.length; i++) {
-			if(stacks[i] != null)
-				inv[i] = stacks[i].clone();
+			if (stacks[i] != null) inv[i] = stacks[i].clone();
 		}
 		return inv;
 	}
 
 	/**
 	 * removes a certain amount from every item stack in the contents
+	 *
 	 * @param input
 	 * @param sub
 	 */
 	public static void removeNFrom(ItemStack[] input, int sub) {
 		for (ItemStack stack : input) {
-			if(stack != null)
-				stack.setAmount(stack.getAmount()-sub);
+			if (stack != null) stack.setAmount(stack.getAmount() - sub);
 		}
 	}
 
 	/**
 	 * remove the item stack from the array
+	 *
 	 * @param stack the stack to remove
 	 * @param array the array to deduct from
 	 */
@@ -255,10 +257,10 @@ public class Inventories {
 		int count = stack.getAmount(); // get current amount
 		for (int i = 0; i < array.length; i++) {
 			ItemStack current = array[i];
-			if(Inventories.isSimilar(current, stack)) { // if they are the same items
+			if (Inventories.isSimilar(current, stack)) { // if they are the same items
 				int amount = current.getAmount(); // amount of items in that slot
 				amount -= count;
-				if(amount <= 0) { // if the stack is too small
+				if (amount <= 0) { // if the stack is too small
 					array[i] = null; // take out the whole stack
 					count = Math.abs(amount); // and set the counter to the remainder
 				} else {
@@ -282,13 +284,12 @@ public class Inventories {
 
 		for (int i = 0; i < stacks.length; i++) {
 			ItemStack stack = stacks[i];
-			if(stack != null) {
+			if (stack != null) {
 				int size = stack.getAmount();
-				if(size > amount) {
+				if (size > amount) {
 					stack.setAmount(size - amount);
 
-					if(amount == 0)
-						break;
+					if (amount == 0) break;
 
 					ItemStack clone = stack.clone();
 					clone.setAmount(amount);
@@ -305,6 +306,52 @@ public class Inventories {
 		return stackList;
 	}
 
+	/**
+	 * gets the first non-null itemstack
+	 *
+	 * @param inventory
+	 * @return
+	 */
+	public static ItemStack getFirst(Inventory inventory) {
+		for (int i = 0; i < inventory.getSize(); i++) {
+			ItemStack stack = inventory.getItem(i);
+			if (stack != null) return stack;
+		}
+		return null;
+	}
 
+	/**
+	 * checks if the itemstack is empty (air/null/0)
+	 *
+	 * @param stack
+	 * @return
+	 */
+	public static boolean empty(ItemStack stack) {
+		return stack == null || stack.getType() == Material.AIR || stack.getAmount() == 0;
+	}
+
+	/**
+	 * decreases the amount of items in the stack by amount, or returns null if the stack is now empty
+	 *
+	 * @param amount the amount to decrement by
+	 * @param stack
+	 * @return a cloned stack or null
+	 */
+	public static ItemStack decrement(ItemStack stack, int amount) {
+		if (stack.getAmount()-amount > 0) {
+			stack = stack.clone();
+			stack.setAmount(stack.getAmount() - amount);
+		} else stack = null;
+		return stack;
+	}
+
+	/**
+	 * equivalent to {@link Inventories#decrement(ItemStack, int)} but only by 1
+	 * @param stack
+	 * @return
+	 */
+	public static ItemStack decrement(ItemStack stack) {
+		return decrement(stack, 1);
+	}
 
 }
