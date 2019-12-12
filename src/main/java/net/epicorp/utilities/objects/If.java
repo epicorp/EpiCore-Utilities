@@ -40,9 +40,10 @@ public class If {
 	public interface ERunnable extends Runnable {
 		void impl() throws Throwable;
 
+		@Override
 		default void run() {
 			try {
-				impl();
+				this.impl();
 			} catch (Throwable throwable) {
 				throw new RuntimeException(throwable);
 			}

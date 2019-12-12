@@ -1,6 +1,5 @@
 package net.epicorp.utilities.inventories;
 
-import net.epicorp.persistance.Persistent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -18,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 
-public class CustomInventory implements Inventory, Persistent {
+public class CustomInventory implements Inventory {
 
 	protected ItemStack[] contents; // non null
 	protected int stackSize; // TODO implement
@@ -26,7 +25,7 @@ public class CustomInventory implements Inventory, Persistent {
 
 	public CustomInventory(ItemStack[] array) {
 		this.contents = array;
-		name = "Chest";
+		this.name = "Chest";
 	}
 
 	public CustomInventory(int length) {this(new ItemStack[length]);}
@@ -35,39 +34,34 @@ public class CustomInventory implements Inventory, Persistent {
 
 	@Override
 	public int getSize() {
-		return contents.length;
+		return this.contents.length;
 	}
 
 	@Override
 	public int getMaxStackSize() {
-		return stackSize;
+		return this.stackSize;
 	}
 
 	@Override
 	public void setMaxStackSize(int size) {
-		stackSize = size;
-	}
-
-	@Override
-	public String getName() {
-		return name;
+		this.stackSize = size;
 	}
 
 	@Override
 	public ItemStack getItem(int index) {
-		return contents[index];
+		return this.contents[index];
 	}
 
 	@Override
 	public void setItem(int index, ItemStack item) {
-		contents[index] = item;
+		this.contents[index] = item;
 	}
 
 	@Override
 	public HashMap<Integer, ItemStack> addItem(ItemStack... items) throws IllegalArgumentException {
 		HashMap<Integer, ItemStack> unfit = new HashMap<>();
 		for (int i = 0; i < items.length; i++) {
-			ItemStack stack = Inventories.addStack(items[i], contents);
+			ItemStack stack = Inventories.addStack(items[i], this.contents);
 			unfit.put(i, stack);
 		}
 		return unfit;
@@ -77,7 +71,7 @@ public class CustomInventory implements Inventory, Persistent {
 	public HashMap<Integer, ItemStack> removeItem(ItemStack... items) throws IllegalArgumentException {
 		HashMap<Integer, ItemStack> unfit = new HashMap<>();
 		for (int i = 0; i < items.length; i++) {
-			ItemStack stack = Inventories.remove(items[i], contents);
+			ItemStack stack = Inventories.remove(items[i], this.contents);
 			unfit.put(i, stack);
 		}
 		return unfit;
@@ -85,153 +79,123 @@ public class CustomInventory implements Inventory, Persistent {
 
 	@Override
 	public ItemStack[] getContents() {
-		return getStorageContents();
+		return this.getStorageContents();
 	}
 
 	@Override
 	public void setContents(ItemStack[] items) throws IllegalArgumentException {
-		setStorageContents(items);
+		this.setStorageContents(items);
 	}
 
 	@Override
 	public ItemStack[] getStorageContents() {
-		return contents;
+		return this.contents;
 	}
 
 	@Override
 	public void setStorageContents(ItemStack[] items) throws IllegalArgumentException {
-		contents = items;
-	}
-
-	@Override
-	public boolean contains(int materialId) {
-		throw new UnsupportedOperationException("deprecated");
+		this.contents = items;
 	}
 
 	@Override
 	public boolean contains(Material material) throws IllegalArgumentException {
-		for (ItemStack content : contents)
+		for (ItemStack content : this.contents)
 			if (content.getType() == material) return true;
 		return false;
 	}
 
 	@Override
 	public boolean contains(ItemStack item) {
-		for (ItemStack content : contents)
+		for (ItemStack content : this.contents)
 			if (Inventories.isSimilar(content, item)) return true;
 		return false;
 	}
 
 	@Override
-	public boolean contains(int materialId, int amount) {
-		throw new UnsupportedOperationException("deprecated");
-	}
-
-	@Override
 	public boolean contains(Material material, int amount) throws IllegalArgumentException {
-		return contains(new ItemStack(material, amount));
+		return this.contains(new ItemStack(material, amount));
 	}
 
 	@Override
 	public boolean contains(ItemStack item, int amount) {
 		item = item.clone();
 		item.setAmount(amount);
-		return contains(item);
+		return this.contains(item);
 	}
 
 	@Override
 	public boolean containsAtLeast(ItemStack item, int amount) {
 		item = item.clone();
 		item.setAmount(amount);
-		return Inventories.contains(item, contents);
-	}
-
-	@Override
-	public HashMap<Integer, ? extends ItemStack> all(int materialId) {
-		throw new UnsupportedOperationException("deprecated");
+		return Inventories.contains(item, this.contents);
 	}
 
 	@Override
 	public HashMap<Integer, ? extends ItemStack> all(Material material) throws IllegalArgumentException {
 		HashMap<Integer, ItemStack> stacks = new HashMap<>();
-		for (int i = 0; i < contents.length; i++)
-			if (contents[i] != null && material == contents[i].getType()) stacks.put(i, contents[i].clone());
+		for (int i = 0; i < this.contents.length; i++)
+			if (this.contents[i] != null && material == this.contents[i].getType()) stacks.put(i, this.contents[i].clone());
 		return stacks;
 	}
 
 	@Override
 	public HashMap<Integer, ? extends ItemStack> all(ItemStack item) {
 		HashMap<Integer, ItemStack> stacks = new HashMap<>();
-		for (int i = 0; i < contents.length; i++)
-			if (contents[i] != null && Inventories.isSimilar(contents[i], item)) stacks.put(i, contents[i].clone());
+		for (int i = 0; i < this.contents.length; i++)
+			if (this.contents[i] != null && Inventories.isSimilar(this.contents[i], item)) stacks.put(i, this.contents[i].clone());
 		return stacks;
 	}
 
 	@Override
-	public int first(int materialId) {
-		throw new UnsupportedOperationException("deprecated");
-	}
-
-	@Override
 	public int first(Material material) throws IllegalArgumentException {
-		for (int i = 0; i < contents.length; i++)
-			if(contents[i] != null && contents[i].getType() == material)
+		for (int i = 0; i < this.contents.length; i++)
+			if(this.contents[i] != null && this.contents[i].getType() == material)
 				return i;
 		return -1;
 	}
 
 	@Override
 	public int first(ItemStack item) {
-		for (int i = 0; i < contents.length; i++)
-			if(contents[i] != null && Inventories.isSimilar(contents[i], item))
+		for (int i = 0; i < this.contents.length; i++)
+			if(this.contents[i] != null && Inventories.isSimilar(this.contents[i], item))
 				return i;
 		return -1;
 	}
 
 	@Override
 	public int firstEmpty() {
-		for (int i = 0; i < contents.length; i++)
-			if(contents[i] == null)
+		for (int i = 0; i < this.contents.length; i++)
+			if(this.contents[i] == null)
 				return i;
 		return -1;
 	}
 
-	@Override
-	public void remove(int materialId) {
-		throw new UnsupportedOperationException("deprecated");
-	}
 
 	@Override
 	public void remove(Material material) throws IllegalArgumentException {
-		for (ItemStack content : contents)
+		for (ItemStack content : this.contents)
 			if(content != null && content.getType() == material)
 				content.setAmount(content.getAmount()-1);
 	}
 
 	@Override
 	public void remove(ItemStack item) {
-		Inventories.remove(item, contents);
+		Inventories.remove(item, this.contents);
 	}
 
 	@Override
 	public void clear(int index) {
-		contents[index] = null;
+		this.contents[index] = null;
 	}
 
 	@Override
 	public void clear() {
-		for (int i = 0; i < contents.length; i++)
-			contents[i] = null;
+		Arrays.fill(this.contents, null);
 	}
 
 	@Override
 	public List<HumanEntity> getViewers() {
 		throw new UnsupportedOperationException("Not supported!");
-	}
-
-	@Override
-	public String getTitle() {
-		return name;
 	}
 
 	@Override
@@ -246,49 +210,16 @@ public class CustomInventory implements Inventory, Persistent {
 
 	@Override
 	public ListIterator<ItemStack> iterator() {
-		return (ListIterator<ItemStack>) Arrays.asList(contents).iterator();
+		return (ListIterator<ItemStack>) Arrays.asList(this.contents).iterator();
 	}
 
 	@Override
 	public ListIterator<ItemStack> iterator(int index) {
-		return (ListIterator<ItemStack>) Arrays.asList(contents).iterator();
+		return (ListIterator<ItemStack>) Arrays.asList(this.contents).iterator();
 	}
 
 	@Override
 	public Location getLocation() {
 		throw new UnsupportedOperationException("Not supported!");
-	}
-
-	@Override
-	public void load(DataInputStream stream) throws IOException {
-		name = stream.readUTF();
-		stackSize = stream.readInt();
-
-		ItemStack[] stacks = new ItemStack[stream.readInt()];
-
-		BukkitObjectInputStream bois = new BukkitObjectInputStream(stream);
-		for (int i = 0; i < stacks.length; i++) {
-			try {
-				stacks[i] = (ItemStack) bois.readObject();
-			} catch (ClassNotFoundException e) {
-				throw new RuntimeException(e);
-			}
-		}
-		this.contents = stacks;
-	}
-
-	@Override
-	public void writeTo(DataOutputStream stream) throws IOException {
-		stream.writeUTF(name);
-		stream.writeInt(stackSize);
-		stream.writeInt(contents.length);
-		BukkitObjectOutputStream boos = new BukkitObjectOutputStream(stream);
-		for (ItemStack content : contents)
-			boos.writeObject(content);
-	}
-
-	@Override
-	public void close() {
-
 	}
 }

@@ -17,25 +17,24 @@ public class ImmutableStack {
 		this.stack = stack;
 	}
 
-	public Material getType() {return stack.getType();}
-	@Deprecated
-	public int getTypeId() {return stack.getTypeId();}
-	public int getAmount() {return stack.getAmount();}
-	public MaterialData getData() {return stack.getData();}
-	public short getDurability() {return stack.getDurability();}
-	public int getMaxStackSize() {return stack.getMaxStackSize();}
+	public Material getType() {return this.stack.getType();}
+
+	public int getAmount() {return this.stack.getAmount();}
+	public MaterialData getData() {return this.stack.getData();}
+	public short getDurability() {return this.stack.getDurability();}
+	public int getMaxStackSize() {return this.stack.getMaxStackSize();}
 	public boolean isSimilar(ItemStack stack) {return this.stack.isSimilar(stack);}
-	public boolean containsEnchantment(Enchantment ench) {return stack.containsEnchantment(ench);}
-	public int getEnchantmentLevel(Enchantment ench) {return stack.getEnchantmentLevel(ench);}
-	public Map<Enchantment, Integer> getEnchantments() {return stack.getEnchantments();}
-	public Map<String, Object> serialize() {return stack.serialize();}
-	public ItemMeta getItemMeta() {return stack.getItemMeta();}
-	public boolean hasItemMeta() {return stack.hasItemMeta();}
+	public boolean containsEnchantment(Enchantment ench) {return this.stack.containsEnchantment(ench);}
+	public int getEnchantmentLevel(Enchantment ench) {return this.stack.getEnchantmentLevel(ench);}
+	public Map<Enchantment, Integer> getEnchantments() {return this.stack.getEnchantments();}
+	public Map<String, Object> serialize() {return this.stack.serialize();}
+	public ItemMeta getItemMeta() {return this.stack.getItemMeta();}
+	public boolean hasItemMeta() {return this.stack.hasItemMeta();}
 	public ItemStack stack() {
-		return stack.clone();
+		return this.stack.clone();
 	}
 
 	public boolean isNull() {
-		return stack == null;
+		return this.stack == null;
 	}
 }

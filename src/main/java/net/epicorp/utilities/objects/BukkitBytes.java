@@ -16,16 +16,12 @@ public class BukkitBytes {
 	/**
 	 * serializes the inventory to the output stream
 	 * the inventory holder and locations are not serialized
+	 * and now the titles are gone :crab:
 	 * @param inventory
 	 * @param dos
 	 * @throws IOException
 	 */
 	public static void serializeInventory(Inventory inventory, DataOutputStream dos) throws IOException {
-		String title = inventory.getTitle();
-		If.ifElse(title == null, () -> dos.writeInt(0), () -> {
-			dos.writeInt(1);
-			dos.writeUTF(title);
-		});
 
 		InventoryType type = inventory.getType(); // non null
 		dos.writeUTF(type.name());
@@ -50,9 +46,6 @@ public class BukkitBytes {
 	 * @throws ClassNotFoundException
 	 */
 	public static Inventory deserializeInventory(DataInputStream dis) throws IOException, ClassNotFoundException {
-		String name = null;
-		if(dis.readInt() == 1)
-			name = dis.readUTF(); // title
 
 		InventoryType type = InventoryType.valueOf(dis.readUTF());
 		int size = -1; // only for chests
@@ -69,9 +62,9 @@ public class BukkitBytes {
 
 		Inventory inventory;
 		if(size == -1)
-			inventory = name == null ? Bukkit.createInventory(null, type) : Bukkit.createInventory(null, type, name);
+			inventory = Bukkit.createInventory(null, type);
 		else
-			inventory = name == null ? Bukkit.createInventory(null, size) : Bukkit.createInventory(null, size, name);
+			inventory = Bukkit.createInventory(null, size);
 		inventory.setMaxStackSize(stackSize);
 		inventory.setContents(stacks);
 
